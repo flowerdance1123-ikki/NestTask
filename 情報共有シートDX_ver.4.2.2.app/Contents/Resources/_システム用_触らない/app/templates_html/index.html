@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>情報共有シートDX</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ ヘッダー ══ -->
+  <header id="appHeader">
+    <div class="header-title">情報共有シートDX</div>
+    <div id="stepIndicator">
+      <div class="step-dot" id="dot1">1</div>
+      <div class="step-line" id="line12"></div>
+      <div class="step-dot" id="dot2">2</div>
+      <div class="step-line" id="line23"></div>
+      <div class="step-dot" id="dot3">3</div>
+    </div>
+  </header>
+
+  <!-- ══ メインコンテンツ ══ -->
+  <main id="appMain">
+    <form id="mainForm" enctype="multipart/form-data" onsubmit="return false;">
+
+      <!-- ─────────── STEP 1 ─────────── -->
+      <div id="step1" class="step-panel">
+        <div class="step-content">
+          <div class="privacy-notice">
+            <span class="privacy-notice-icon">⚠️</span>
+            <span>AI読み取りでは入力内容が外部APIに送信されます。<strong>患者名、施設名、住所、電話番号、個人を特定できる情報は入力しないでください。</strong></span>
+          </div>
+          <h2 class="step-heading">数ヶ月分の日報もしくは報告書の文章を貼り付けてください</h2>
+          <p class="step-sub">spotlog等からコピーした日報をそのまま貼り付けてください</p>
+          <textarea id="reportInput" class="report-textarea"
+            placeholder="ここに日報をコピー＆ペーストしてください…"></textarea>
+          <p id="privacyWarn" class="privacy-warn" style="display:none"></p>
+
+          <details class="json-detail">
+            <summary class="json-detail-summary">▶ JSONを直接入力する場合はこちら</summary>
+            <div class="json-panel">
+              <textarea id="jsonInput" class="json-textarea"
+                placeholder='{"patient_name":"山田太郎", "template_type":"bodymap", ...}'></textarea>
+              <div class="json-buttons">
+                <button type="button" id="applyJsonBtn" class="btn-apply-json">フォームに反映</button>
+                <button type="button" id="clearJsonBtn" class="btn-clear-json">クリア</button>
+              </div>
+              <p id="jsonError" class="json-msg json-error" style="display:none"></p>
+              <p id="jsonInfo"  class="json-msg json-info"  style="display:none"></p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- ─────────── STEP 2 ─────────── -->
+      <div id="step2" class="step-panel">
+        <div class="step-content">
+          <h2 class="step-heading">どのテンプレートで作成しますか？</h2>
+          <p id="typeError" class="type-error" style="display:none">テンプレートを選択してください</p>
+          <div class="template-cards">
+
+            <label class="template-card" id="card-bodymap">
+              <input type="radio" name="template_type" value="bodymap">
+              <div class="card-inner">
+                <div class="card-icon">🗺️</div>
+                <div class="card-name">人体図タイプ</div>
+                <div class="card-desc">身体状況・治療目的を図で表現</div>
+              </div>
+              <div class="card-check">✓</div>
+            </label>
+
+            <label class="template-card" id="card-photo">
+              <input type="radio" name="template_type" value="photo">
+              <div class="card-inner">
+                <div class="card-icon">📷</div>
+                <div class="card-name">写真タイプ</div>
+                <div class="card-desc">写真2枚を掲載</div>
+              </div>
+              <div class="card-check">✓</div>
+            </label>
+
+            <label class="template-card" id="card-qr">
+              <input type="radio" name="template_type" value="qr">
+              <div class="card-inner">
+                <div class="card-icon">📱</div>
+                <div class="card-name">動画QRタイプ</div>
+                <div class="card-desc">動画URLからQRコードを生成</div>
+              </div>
+              <div class="card-check">✓</div>
+            </label>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────────── STEP 3a ─────────── -->
+      <div id="step3a" class="step-panel">
+        <div class="step-content step3a-content">
+
+          <!-- 基本情報（3列） -->
+          <div class="field-row-3">
+            <div class="field">
+              <label class="field-label">患者名 <span class="req">必須</span></label>
+              <input type="text" id="patient_name" name="patient_name"
+                class="field-input" placeholder="山田 太郎">
+              <p class="field-error" style="display:none">患者名を入力してください</p>
+            </div>
+            <div class="field">
+              <label class="field-label">担当施術者名</label>
+              <input type="text" id="therapist_name" name="therapist_name"
+                class="field-input" placeholder="野間 一輝">
+            </div>
+            <div class="field">
+              <label class="field-label">作成日</label>
+              <input type="text" id="created_date" name="created_date"
+                class="field-input" placeholder="2026年5月28日">
+            </div>
+          </div>
+
+          <!-- 身体状況 -->
+          <div class="field">
+            <label class="field-label">身体状況・治療目的 <span class="req">必須</span></label>
+            <textarea id="body_status" name="body_status"
+              class="field-textarea h72" placeholder="現在の身体状況や治療目的を記入…"></textarea>
+            <p class="field-error" style="display:none">身体状況・治療目的を入力してください</p>
+          </div>
+
+          <!-- 最近のご様子 -->
+          <div class="field">
+            <label class="field-label">最近のご様子 <span class="req">必須</span></label>
+            <textarea id="recent_state" name="recent_state"
+              class="field-textarea h72" placeholder="最近のご様子を記入…"></textarea>
+            <p class="field-error" style="display:none">最近のご様子を入力してください</p>
+          </div>
+
+          <!-- 備考・共有ポイント（bodymap/photo のみ） -->
+          <div id="section_notes" class="field-row-2" style="display:none">
+            <div class="field">
+              <label class="field-label">備考</label>
+              <textarea id="notes" name="notes"
+                class="field-textarea h60" placeholder="備考…"></textarea>
+            </div>
+            <div class="field">
+              <label class="field-label">共有ポイント</label>
+              <textarea id="shared_points" name="shared_points"
+                class="field-textarea h60" placeholder="共有ポイント…"></textarea>
+            </div>
+          </div>
+
+          <!-- 写真（photo のみ） -->
+          <div id="section_photo" style="display:none">
+            <div class="photo-grid">
+              <div class="photo-block">
+                <div class="field-label">写真1</div>
+                <div class="photo-drop" id="drop1">
+                  <input type="file" id="photo_1" name="photo_1" class="file-input" accept="image/*">
+                  <img id="preview1" class="photo-preview" style="display:none" src="" alt="">
+                  <span id="hint1" class="drop-hint">📁 クリックまたはドロップ</span>
+                </div>
+                <input type="text" id="photo_1_caption" name="photo_1_caption"
+                  class="field-input mt4" placeholder="キャプション（任意）">
+              </div>
+              <div class="photo-block">
+                <div class="field-label">写真2</div>
+                <div class="photo-drop" id="drop2">
+                  <input type="file" id="photo_2" name="photo_2" class="file-input" accept="image/*">
+                  <img id="preview2" class="photo-preview" style="display:none" src="" alt="">
+                  <span id="hint2" class="drop-hint">📁 クリックまたはドロップ</span>
+                </div>
+                <input type="text" id="photo_2_caption" name="photo_2_caption"
+                  class="field-input mt4" placeholder="キャプション（任意）">
+              </div>
+            </div>
+          </div>
+
+          <!-- 動画QR（qr のみ） -->
+          <div id="section_qr" style="display:none">
+            <div class="field-row-2">
+              <div class="field">
+                <label class="field-label">メイン動画タイトル</label>
+                <input type="text" id="main_title" name="main_title"
+                  class="field-input" placeholder="動画タイトル">
+              </div>
+              <div class="field">
+                <label class="field-label">メイン動画URL <span class="req">必須</span></label>
+                <input type="text" id="main_url" name="main_url"
+                  class="field-input" placeholder="https://…">
+                <p class="field-error" style="display:none">動画URLを入力してください</p>
+              </div>
+            </div>
+            <div class="field-row-2">
+              <div class="field">
+                <label class="field-label">サブ動画タイトル（任意）</label>
+                <input type="text" id="sub_title_1" name="sub_title_1"
+                  class="field-input" placeholder="サブ動画タイトル">
+              </div>
+              <div class="field">
+                <label class="field-label">サブ動画URL（任意）</label>
+                <input type="text" id="sub_url_1" name="sub_url_1"
+                  class="field-input" placeholder="https://…">
+              </div>
+            </div>
+          </div>
+
+          <!-- 送付書類セット（全タイプ共通） -->
+          <div class="docs-section">
+            <div class="docs-header">送付書類セット（オプション）</div>
+            <div class="docs-body">
+              <div class="docs-col">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="create_cover_letter" name="create_cover_letter" value="1">
+                  <span>送付状を作成する</span>
+                </label>
+                <div id="cover_letter_fields" class="cover-letter-fields" style="display:none">
+                  <input type="text" id="cover_letter_therapist" name="cover_letter_therapist"
+                    class="field-input" placeholder="担当者名（空欄=施術者名を使用）">
+                </div>
+              </div>
+              <div class="docs-col">
+                <span class="docs-sub-label">ご家族向けアンケート</span>
+                <div class="survey-radio-group">
+                  <label class="survey-radio-label">
+                    <input type="radio" name="survey_type" value="none" checked> 付けない
+                  </label>
+                  <label class="survey-radio-label">
+                    <input type="radio" name="survey_type" value="first"> 初回用
+                  </label>
+                  <label class="survey-radio-label">
+                    <input type="radio" name="survey_type" value="followup"> 2回目以降用
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.step3a-content -->
+      </div><!-- /#step3a -->
+
+      <!-- ─────────── STEP 3b ─────────── -->
+      <div id="step3b" class="step-panel">
+        <div class="step-content step3b-content">
+          <h2 class="step-heading">内容を確認してください</h2>
+          <p class="step-sub">以下の内容でシートを作成します。修正が必要な場合は「← 戻る」を押してください。</p>
+          <div id="confirmContent" class="confirm-content"></div>
+          <div class="decide-area">
+            <button type="button" id="btnDecide" class="btn-decide">
+              この内容で決定（パワポを作成）
+            </button>
+            <p id="createError" class="create-error" style="display:none"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────────── 完了画面 ─────────── -->
+      <div id="stepDone" class="step-panel">
+        <div class="step-content done-content">
+          <div class="done-icon">✅</div>
+          <h2 class="done-heading">作成完了！</h2>
+          <div class="download-area">
+            <a id="downloadLink" class="btn-download" href="#">
+              📂 情報共有シート（PPTX）を開く
+            </a>
+          </div>
+          <div id="pdfDownloadArea" class="pdf-download-area" style="display:none"></div>
+          <div id="warningBox" class="warning-box" style="display:none"></div>
+          <div class="done-actions">
+            <button type="button" class="btn-open-folder"
+              onclick="openOutputFolder()">📂 出力フォルダを開く</button>
+            <button type="button" id="btnAnother" class="btn-another">
+              もう一枚作る
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </main>
+
+  <!-- ══ フッター ══ -->
+  <footer id="appFooter">
+    <button type="button" id="btnBack" class="btn-back">← 戻る</button>
+    <div id="footerStepLabel" class="footer-step-label">STEP 1 / 3</div>
+    <button type="button" id="btnNext" class="btn-next">次へ →</button>
+  </footer>
+
+</div><!-- /#app -->
+
+<!-- ローディングオーバーレイ -->
+<div id="loading" class="loading-overlay" style="display:none">
+  <div class="loading-inner">
+    <div class="spinner"></div>
+    <p id="loadingMsg" class="loading-msg">処理中…</p>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

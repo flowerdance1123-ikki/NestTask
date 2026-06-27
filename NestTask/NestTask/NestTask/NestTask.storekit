@@ -1,0 +1,59 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "E4A68C38-4B99-4E1A-AB61-4D7C0D5DE4B1",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "500",
+      "familyShareable" : false,
+      "internalID" : "4A646F56-777B-4B9A-8C75-16B554A4D3D9",
+      "localizations" : [
+        {
+          "description" : "テンプレート数の上限解除、履歴検索、JSONバックアップなどのPro機能を解放します。",
+          "displayName" : "NestTask Pro",
+          "locale" : "ja"
+        },
+        {
+          "description" : "Unlocks Pro features including unlimited templates, history search, and JSON backup.",
+          "displayName" : "NestTask Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "nesttask500",
+      "referenceName" : "NestTask Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "ja",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "JPN",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 5,
+    "minor" : 0
+  }
+}
